@@ -2,7 +2,7 @@
 {
     public class Plane
     {
-        public int Id {  get; set; }
+        public Guid Id {  get; set; }
         public string PlaneType {  get; set; }
         public string SerialNumber {  get; set; }
         public ListOfFlights ListOfFlights { get; set; }

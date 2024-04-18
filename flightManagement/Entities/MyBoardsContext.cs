@@ -8,11 +8,11 @@ namespace flightManagement.Entities
         {
             
         }
-        public DbSet<ListOfFlights> ListOfFlight { get;set; }
-        public DbSet<Location> Locations { get; set; }
-        public DbSet<Plane> Planes { get; set; }
-        public DbSet<Arrival> Arrivals { get; set; }
-        public DbSet<Departure> Departures { get; set; }    
+        public DbSet<ListOfFlights> ListsOfFlight { get;set; }
+        public DbSet<Location> Locationss { get; set; }
+        public DbSet<Plane> Planess { get; set; }
+        public DbSet<Arrival> Arrivalss { get; set; }
+        public DbSet<Departure> Departuress { get; set; }    
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,15 +31,15 @@ namespace flightManagement.Entities
                .WithOne(a => a.ListOfFlights)
                .HasForeignKey<ListOfFlights>(a => a.PlaneId);
 
-            modelBuilder.Entity<Arrival>()
-              .HasOne(u => u.Location)
-              .WithOne(a => a.Arrival)
-              .HasForeignKey<Arrival>(a => a.LocationId);
+            modelBuilder.Entity<Location>()
+              .HasOne(u => u.Arrival)
+              .WithOne(a => a.Location)
+              .HasForeignKey<Location>(a => a.ArrivalId);
 
-            modelBuilder.Entity<Departure>()
-              .HasOne(u => u.Location)
-              .WithOne(a => a.Departure)
-              .HasForeignKey<Departure>(a => a.LocationId);
+            modelBuilder.Entity<Location>()
+              .HasOne(u => u.Departure)
+              .WithOne(a => a.Location)
+              .HasForeignKey<Location>(a => a.DepartureId);
 
         }
 
