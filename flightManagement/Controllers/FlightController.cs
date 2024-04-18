@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using flightManagement.Entities;
 using flightManagement.Models;
+using flightManagement.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
 
 namespace flightManagement.Controllers
@@ -11,37 +13,63 @@ namespace flightManagement.Controllers
     public class FlightController : ControllerBase
     {
 
-        private readonly MyBoardsContext _dbContext;
-        private readonly IMapper _mapper;
-        public FlightController(MyBoardsContext dbCountext) {
-            _dbContext = dbCountext;
+        private readonly IFlightService _flightService;
+        public FlightController(IFlightService flightService)
+        {
+            _flightService = flightService;
         }
 
-        public ActionResult<IEnumerable<ListOfFlights>> GetAll()
+        [HttpGet]
+        public ActionResult<IEnumerable<FlightListsDto>> GetAll()
         {
-            var flight = _dbContext.ListsOfFlight.ToList();
-            return Ok(flight);
+            var flightListDto = _flightService.GetAll();
+
+
+            return Ok(flightListDto);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ListOfFlights> Get([FromRoute] Guid id)
+        public ActionResult<FlightListsDto> Get([FromRoute] Guid id)
         {
-            var flight = _dbContext.ListsOfFlight.FirstOrDefault(r => r.FlightNumber == id);
+            var flight = _flightService.GetById(id);
             if (flight is null)
             {
                 return NotFound();
             }
+
+
             return Ok(flight);
         }
 
         [HttpPost]
         public ActionResult CreateFlight([FromBody] CreateFlightDto dto)
         {
-            var flight = _mapper.Map<ListOfFlights>(dto);
-            _dbContext.ListsOfFlight.Add(flight);
-            _dbContext.SaveChanges();
+            var id = _flightService.Create(dto);
 
-            return Created($"/aflight/{flight.FlightNumber}", null);
+            return Created($"/aflight/{id}", null);
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] Guid id)
+        {
+            var isDeleted = _flightService.Delete(id);
+            if (isDeleted)
+            {
+                return NoContent();
+
+            }
+            return NotFound();
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult Update([FromBody] UpdateFlightDto dto , [FromRoute] Guid id)
+        {
+            var isUpdated = _flightService.Update(id, dto);
+            if (!isUpdated)
+            {
+                return NotFound();
+            }
+            return Ok();
         }
 
       
